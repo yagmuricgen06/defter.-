@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yönetici Paneli — defter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&family=Source+Serif+4:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FBF3E7;
+    --paper-card: #FEFAF3;
+    --ink: #3A2E27;
+    --ink-soft: #6B5D51;
+    --rust: #B5541A;
+    --rust-deep: #8F3F12;
+    --pine: #2F6F62;
+    --pine-deep: #204E44;
+    --pine-soft: rgba(47,111,98,0.1);
+    --tan-line: #DCC7A3;
+    --coffee: #4A3728;
+    --coffee-soft: #5C4632;
+    --amber-soft: rgba(181,84,26,0.1);
+    --shadow: rgba(58,46,39,0.14);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    display:flex;
+    min-height:100vh;
+  }
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:230px;
+    flex-shrink:0;
+    background:var(--coffee);
+    color:var(--paper);
+    padding:28px 20px;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .sidebar .logo{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.3rem;
+    margin-bottom:4px;
+  }
+  .sidebar .logo .dot{ color:var(--rust); }
+  .sidebar .tagline{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    color:#B79D82;
+    margin-bottom:34px;
+  }
+  .side-nav{ display:flex; flex-direction:column; gap:3px; }
+  .side-nav a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    padding:10px 12px;
+    border-radius:5px;
+    color:#D8C7B4;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    transition:background .18s ease, color .18s ease;
+  }
+  .side-nav a:hover{ background:rgba(255,255,255,0.06); color:var(--paper); }
+  .side-nav a.active{ background:var(--rust); color:var(--paper-card); }
+  .side-nav .icon{ font-size:0.95rem; opacity:0.85; }
+
+  .sidebar-bottom{ margin-top:auto; }
+  .user-chip{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    border-radius:6px;
+    background:rgba(255,255,255,0.05);
+    margin-bottom:10px;
+  }
+  .user-avatar{
+    width:34px; height:34px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--rust), var(--pine));
+    flex-shrink:0;
+  }
+  .user-chip .name{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--paper); }
+  .user-chip .role{ font-family:'JetBrains Mono', monospace; font-size:0.66rem; color:#B79D82; }
+  .logout{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.74rem;
+    color:#B79D82;
+    display:block;
+    padding:8px 12px;
+  }
+  .logout:hover{ color:var(--paper); }
+
+  /* ---------- Main ---------- */
+  main{ flex:1; padding:34px 40px 60px; max-width:1080px; }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .topbar h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.7rem;
+    margin:0;
+  }
+  .topbar .sub{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    margin-top:5px;
+  }
+  .btn-new{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    font-size:0.82rem;
+    background:var(--rust);
+    color:var(--paper-card);
+    border:none;
+    padding:12px 20px;
+    border-radius:5px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .btn-new:hover{ background:var(--rust-deep); }
+  .btn-new:active{ transform:scale(0.97); }
+
+  /* ---------- Stats ---------- */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+    margin-bottom:34px;
+  }
+  .stat-card{
+    background:var(--paper-card);
+    border:1px solid var(--tan-line);
+    border-radius:6px;
+    padding:20px;
+  }
+  .stat-card .label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .stat-card .value{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.7rem;
+    color:var(--ink);
+  }
+  .stat-card .delta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color:var(--pine-deep);
+    margin-top:6px;
+  }
+  .stat-card .delta.down{ color:var(--rust-deep); }
+
+  /* ---------- Table ---------- */
+  .panel{
+    background:var(--paper-card);
+    border:1px solid var(--tan-line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 22px;
+    border-bottom:1px solid var(--tan-line);
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .panel-head h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.1rem;
+    margin:0;
+  }
+  .filter-tabs{
+    display:flex;
+    gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.74rem;
+  }
+  .filter-tabs span{
+    padding:6px 12px;
+    border-radius:14px;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .filter-tabs span.active{ background:var(--pine-soft); color:var(--pine-deep); }
+
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-soft);
+    padding:12px 22px;
+    border-bottom:1px solid var(--tan-line);
+  }
+  tbody td{
+    padding:16px 22px;
+    border-bottom:1px solid var(--tan-line);
+    font-size:0.92rem;
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr{ transition:background .15s ease; }
+  tbody tr:hover{ background:rgba(181,84,26,0.035); }
+
+  .post-title{ font-weight:600; color:var(--ink); margin-bottom:3px; }
+  .post-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--rust-deep);
+  }
+  .status{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    padding:4px 10px;
+    border-radius:12px;
+    display:inline-block;
+  }
+  .status.published{ background:var(--pine-soft); color:var(--pine-deep); }
+  .status.draft{ background:var(--amber-soft); color:var(--rust-deep); }
+  .meta-col{ font-family:'JetBrains Mono', monospace; font-size:0.78rem; color:var(--ink-soft); }
+
+  .row-actions{ display:flex; gap:14px; font-family:'JetBrains Mono', monospace; font-size:0.76rem; }
+  .row-actions a{ color:var(--pine-deep); }
+  .row-actions a:hover{ text-decoration:underline; }
+  .row-actions a.danger{ color:var(--rust-deep); }
+
+  @media (max-width: 900px){
+    .stats{ grid-template-columns:repeat(2, 1fr); }
+    .sidebar{ display:none; }
+    main{ padding:24px 18px 50px; }
+    table{ display:block; overflow-x:auto; }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div>
+      <div class="logo">defter<span class="dot">.</span></div>
+      <div class="tagline">yönetici paneli</div>
+    </div>
+    <nav class="side-nav">
+      <a href="admin.html" class="active"><span class="icon">▤</span> Yazılar</a>
+      <a href="#"><span class="icon">✎</span> Yeni Yazı</a>
+      <a href="#"><span class="icon">◐</span> İstatistikler</a>
+      <a href="#"><span class="icon">✉</span> Abonelikler</a>
+      <a href="#"><span class="icon">⚙</span> Ayarlar</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-chip">
+        <div class="user-avatar"></div>
+        <div>
+          <div class="name">Elif Kaya</div>
+          <div class="role">yönetici</div>
+        </div>
+      </div>
+      <a href="admin-login.html" class="logout" id="logout">← çıkış yap</a>
+      <a href="index.html" class="logout">bloga git ↗</a>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Yazılar</h1>
+        <div class="sub">defter · toplam 7 kayıt</div>
+      </div>
+      <button class="btn-new" id="new-post">+ yeni yazı</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Toplam yazı</div>
+          <div class="value" id="total-posts">—</div>
+        <div class="delta">bu ay 2 yeni</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Yayında</div>
+          <div class="value" id="published-posts">—</div>
+        <div class="delta">taslak: 2</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Aboneler</div>
+          <div class="value" id="subscriber-count">—</div>
+        <div class="delta">↑ 18 bu hafta</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Bu ay okunma</div>
+        <div class="value">4.6K</div>
+        <div class="delta down">↓ %3 geçen aya göre</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Tüm yazılar</h3>
+        <div class="filter-tabs">
+          <span class="active">Hepsi</span>
+          <span>Yayında</span>
+          <span>Taslak</span>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Başlık</th>
+            <th>Durum</th>
+            <th>Tarih</th>
+            <th>Okunma</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody id="posts-body">
+          <tr>
+            <td>
+              <div class="post-title">Bir fonksiyonu üç kez yeniden yazmanın hikayesi</div>
+              <div class="post-tag">#javascript</div>
+            </td>
+            <td><span class="status published">yayında</span></td>
+            <td class="meta-col">12 Ağu 2026</td>
+            <td class="meta-col">1.240</td>
+            <td class="row-actions">
+              <a href="post.html">görüntüle</a>
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Git rebase ile barışma günlüğü</div>
+              <div class="post-tag">#terminal-notları</div>
+            </td>
+            <td><span class="status published">yayında</span></td>
+            <td class="meta-col">5 Ağu 2026</td>
+            <td class="meta-col">890</td>
+            <td class="row-actions">
+              <a href="#">görüntüle</a>
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Yeni bir dil öğrenirken tuttuğum notlar</div>
+              <div class="post-tag">#öğrenme</div>
+            </td>
+            <td><span class="status published">yayında</span></td>
+            <td class="meta-col">28 Tem 2026</td>
+            <td class="meta-col">764</td>
+            <td class="row-actions">
+              <a href="#">görüntüle</a>
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Kod yorumları aslında birer mektup</div>
+              <div class="post-tag">#düşünceler</div>
+            </td>
+            <td><span class="status published">yayında</span></td>
+            <td class="meta-col">19 Tem 2026</td>
+            <td class="meta-col">601</td>
+            <td class="row-actions">
+              <a href="#">görüntüle</a>
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Masamdaki üç sadeleştirici araç</div>
+              <div class="post-tag">#araçlar</div>
+            </td>
+            <td><span class="status published">yayında</span></td>
+            <td class="meta-col">10 Tem 2026</td>
+            <td class="meta-col">512</td>
+            <td class="row-actions">
+              <a href="#">görüntüle</a>
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Async/await'i gerçekten anlamak</div>
+              <div class="post-tag">#javascript</div>
+            </td>
+            <td><span class="status draft">taslak</span></td>
+            <td class="meta-col">güncellendi: dün</td>
+            <td class="meta-col">—</td>
+            <td class="row-actions">
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="post-title">Ekip içi kod incelemeleri üzerine</div>
+              <div class="post-tag">#düşünceler</div>
+            </td>
+            <td><span class="status draft">taslak</span></td>
+            <td class="meta-col">güncellendi: 3 gün önce</td>
+            <td class="meta-col">—</td>
+            <td class="row-actions">
+              <a href="#">düzenle</a>
+              <a href="#" class="danger">sil</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+<script>
+  const API = 'http://localhost:3000/api';
+  const token = sessionStorage.getItem('defterToken');
+  if (!token) location.href = 'admin-login.html';
+  const headers = {'Authorization': `Bearer ${token}`, 'Content-Type':'application/json'};
+  const totalPosts = document.querySelector('#total-posts');
+  const publishedPosts = document.querySelector('#published-posts');
+  const subscriberCount = document.querySelector('#subscriber-count');
+  const postsBody = document.querySelector('#posts-body');
+  const escapeHtml = (text = '') => text.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  async function loadPosts() {
+    const response = await fetch(`${API}/admin/posts`, {headers});
+    if (response.status === 401) { sessionStorage.removeItem('defterToken'); location.href = 'admin-login.html'; return; }
+    const {posts, subscribers} = await response.json();
+    totalPosts.textContent = posts.length; publishedPosts.textContent = posts.filter(post => post.status === 'published').length; subscriberCount.textContent = subscribers;
+    document.querySelector('.topbar .sub').textContent = `defter · toplam ${posts.length} kayıt`;
+    postsBody.innerHTML = posts.map(post => `<tr><td><div class="post-title">${escapeHtml(post.title)}</div><div class="post-tag">#yazı</div></td><td><span class="status ${post.status}">${post.status === 'published' ? 'yayında' : 'taslak'}</span></td><td class="meta-col">${new Intl.DateTimeFormat('tr-TR', {day:'numeric', month:'short', year:'numeric'}).format(new Date(post.updatedAt))}</td><td class="meta-col">—</td><td class="row-actions">${post.status === 'published' ? `<a href="post.html?slug=${encodeURIComponent(post.slug)}">görüntüle</a>` : ''}<a href="#" data-edit="${post.id}">düzenle</a><a href="#" class="danger" data-delete="${post.id}">sil</a></td></tr>`).join('');
+  }
+  document.querySelector('#new-post').addEventListener('click', async () => {
+    const title = prompt('Yazı başlığı:'); if (!title) return;
+    const content = prompt('Yazı içeriği:'); if (!content) return;
+    const status = confirm('Yayımlamak istiyor musunuz?') ? 'published' : 'draft';
+    const response = await fetch(`${API}/admin/posts`, {method:'POST', headers, body:JSON.stringify({title, content, status})});
+    if (!response.ok) return alert((await response.json()).error); loadPosts();
+  });
+  document.querySelector('#posts-body').addEventListener('click', async event => {
+    const editId = event.target.dataset.edit;
+    if (editId) {
+      event.preventDefault();
+      const title = prompt('Yeni başlık:'); if (!title) return;
+      const content = prompt('Yeni içerik:'); if (!content) return;
+      const status = confirm('Yayımlamak istiyor musunuz?') ? 'published' : 'draft';
+      const response = await fetch(`${API}/admin/posts/${editId}`, {method:'PUT', headers, body:JSON.stringify({title, content, status})});
+      if (!response.ok) return alert((await response.json()).error); loadPosts(); return;
+    }
+    const id = event.target.dataset.delete; if (!id) return;
+    event.preventDefault(); if (!confirm('Bu yazı silinsin mi?')) return;
+    await fetch(`${API}/admin/posts/${id}`, {method:'DELETE', headers}); loadPosts();
+  });
+  document.querySelector('#logout').addEventListener('click', () => sessionStorage.removeItem('defterToken'));
+  loadPosts().catch(error => alert(`Sunucuya bağlanılamadı: ${error.message}`));
+</script>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>defter — teknoloji üzerine notlar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FBF3E7;
+    --paper-card: #FEFAF3;
+    --ink: #3A2E27;
+    --ink-soft: #6B5D51;
+    --rust: #B5541A;
+    --rust-deep: #8F3F12;
+    --pine: #2F6F62;
+    --pine-deep: #204E44;
+    --tan-line: #DCC7A3;
+    --coffee: #4A3728;
+    --shadow: rgba(58,46,39,0.14);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(181,84,26,0.05), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(47,111,98,0.05), transparent 40%);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background: var(--rust); color: var(--paper-card); }
+
+  a{ color:inherit; }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding:36px 0 20px;
+    border-bottom:1px solid var(--tan-line);
+  }
+  .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.6rem;
+    letter-spacing:-0.01em;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .logo .dot{ color:var(--rust); }
+  nav{
+    display:flex;
+    gap:26px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    letter-spacing:0.02em;
+  }
+  nav a{
+    text-decoration:none;
+    color:var(--ink-soft);
+    position:relative;
+    padding-bottom:3px;
+    transition:color .2s ease;
+  }
+  nav a:hover, nav a:focus-visible{
+    color:var(--rust-deep);
+  }
+  nav a::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-3px;
+    height:1px;
+    background:var(--rust);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+  }
+  nav a:hover::after, nav a:focus-visible::after{ transform:scaleX(1); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:64px 0 52px;
+    border-bottom:1px solid var(--tan-line);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    color:var(--pine-deep);
+    background:rgba(47,111,98,0.09);
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:3px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{ content:"~/defter $ "; color:var(--pine); }
+  h1.hero-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2.2rem, 5vw, 3.4rem);
+    line-height:1.12;
+    margin:0 0 22px;
+    letter-spacing:-0.015em;
+  }
+  h1.hero-title em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--rust-deep);
+  }
+  .hero-sub{
+    font-size:1.13rem;
+    line-height:1.7;
+    color:var(--ink-soft);
+    max-width:56ch;
+    margin:0;
+  }
+
+  /* ---------- Section headers ---------- */
+  .section{
+    padding:56px 0;
+    border-bottom:1px solid var(--tan-line);
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:34px;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .section-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.5rem;
+    margin:0;
+  }
+  .section-note{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Featured post ---------- */
+  .featured{
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:26px;
+    background:var(--paper-card);
+    border:1px solid var(--tan-line);
+    border-radius:4px;
+    padding:32px;
+    box-shadow: 0 10px 24px -14px var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  .featured::before{
+    content:"";
+    position:absolute;
+    top:0; left:0;
+    width:5px; height:100%;
+    background:var(--rust);
+  }
+  .stamp{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color:var(--pine-deep);
+    border:1px solid var(--pine);
+    border-radius:50%;
+    width:78px; height:78px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    line-height:1.3;
+    transform:rotate(-8deg);
+    flex-shrink:0;
+    opacity:0.85;
+  }
+  .featured-body h3{
+    font-family:'Fraunces', serif;
+    font-size:1.5rem;
+    font-weight:600;
+    margin:0 0 10px;
+  }
+  .featured-body p{
+    color:var(--ink-soft);
+    line-height:1.7;
+    margin:0 0 16px;
+  }
+  .meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .meta span::before{ content:"· "; color:var(--tan-line); }
+  .meta span:first-child::before{ content:""; }
+
+  /* ---------- Index card grid ---------- */
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:22px;
+  }
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--tan-line);
+    padding:24px 22px 22px;
+    position:relative;
+    transition:transform .25s ease, box-shadow .25s ease;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+  }
+  .card::after{
+    content:"";
+    position:absolute;
+    top:0; right:0;
+    width:18px; height:18px;
+    background:var(--paper);
+    border-left:1px solid var(--tan-line);
+    border-bottom:1px solid var(--tan-line);
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 26px -16px var(--shadow);
+  }
+  .card .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--rust-deep);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:10px;
+    display:block;
+  }
+  .card h4{
+    font-family:'Fraunces', serif;
+    font-size:1.14rem;
+    font-weight:600;
+    margin:0 0 8px;
+    line-height:1.35;
+  }
+  .card p{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0 0 14px;
+  }
+  .card .meta{ font-size:0.72rem; }
+
+  /* ---------- About strip ---------- */
+  .about{
+    display:flex;
+    gap:28px;
+    align-items:flex-start;
+  }
+  .about-mark{
+    font-family:'Fraunces', serif;
+    font-size:3.4rem;
+    font-weight:700;
+    color:var(--rust);
+    line-height:1;
+    flex-shrink:0;
+  }
+  .about p{
+    line-height:1.75;
+    color:var(--ink-soft);
+    font-size:1.02rem;
+    max-width:60ch;
+    margin:0;
+  }
+  .about strong{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Newsletter ---------- */
+  .subscribe{
+    background:var(--coffee);
+    color:var(--paper);
+    border-radius:6px;
+    padding:38px 34px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .subscribe h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.3rem;
+    margin:0 0 6px;
+  }
+  .subscribe p{
+    margin:0;
+    color:#D8C7B4;
+    font-size:0.92rem;
+  }
+  .sub-form{
+    display:flex;
+    gap:0;
+    border-radius:3px;
+    overflow:hidden;
+    border:1px solid #6E5847;
+  }
+  .sub-form input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.84rem;
+    padding:12px 14px;
+    border:none;
+    outline:none;
+    background:#3E2C1F;
+    color:var(--paper);
+    width:220px;
+  }
+  .sub-form input::placeholder{ color:#9C8875; }
+  .sub-form button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    font-weight:600;
+    padding:12px 18px;
+    border:none;
+    background:var(--rust);
+    color:var(--paper-card);
+    cursor:pointer;
+    transition:background .2s ease;
+  }
+  .sub-form button:hover{ background:var(--rust-deep); }
+  .sub-form input:focus-visible, .sub-form button:focus-visible{
+    outline:2px solid var(--pine);
+    outline-offset:-2px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:30px 0 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+  }
+  footer a{ text-decoration:none; }
+  footer a:hover{ color:var(--rust-deep); }
+  .footer-links{ display:flex; gap:18px; }
+
+  @media (max-width: 720px){
+    .card-grid{ grid-template-columns:1fr; }
+    .featured{ grid-template-columns:1fr; }
+    .stamp{ transform:rotate(-4deg); }
+    .about{ flex-direction:column; }
+    .subscribe{ flex-direction:column; align-items:flex-start; }
+    .sub-form{ width:100%; }
+    .sub-form input{ width:100%; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="header-row">
+      <div class="logo">defter<span class="dot">.</span></div>
+      <nav>
+        <a href="#yazilar">Yazılar</a>
+        <a href="#hakkinda">Hakkında</a>
+        <a href="#abone">Abone Ol</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">bugün yazıya oturdum</span>
+    <h1 class="hero-title">Kod hakkında,<br><em>bir fincan kahve</em> eşliğinde.</h1>
+    <p class="hero-sub">Yazılımın soğuk terminal ekranının ardındaki insan tarafı üzerine notlar — hatalar, öğrenmeler, küçük zaferler ve arada bir felsefe. Buradaki her yazı gerçek bir defterden koptu.</p>
+  </section>
+
+  <section class="section" id="yazilar">
+    <div class="section-head">
+      <h3 class="section-title">Son yazılar</h3>
+      <span class="section-note" id="post-count">yükleniyor…</span>
+    </div>
+
+    <a href="post.html" style="text-decoration:none; color:inherit; display:block;" class="featured">
+      <div class="stamp">öne<br>çıkan</div>
+      <div class="featured-body">
+        <h3>Bir fonksiyonu üç kez yeniden yazmanın hikayesi</h3>
+        <p>İlk sürüm çalıştı, ikincisi anlaşılır oldu, üçüncüsü ise sonunda huzur verdi. Basit bir "gecikmeli arama" fonksiyonunun yolculuğunda yalınlığın neden bir hedef değil, bir alışkanlık olduğunu anlattım.</p>
+        <div class="meta">
+          <span>12 Ağustos</span>
+          <span>8 dk okuma</span>
+          <span>#javascript</span>
+        </div>
+      </div>
+    </a>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h3 class="section-title">Defterden sayfalar</h3>
+      <span class="section-note">devamı var</span>
+    </div>
+
+    <div class="card-grid">
+      <a href="post.html" class="card" style="text-decoration:none; color:inherit;">
+        <span class="tag">terminal notları</span>
+        <h4>Git rebase ile barışma günlüğü</h4>
+        <p>Uzun süre korktuğum bir komutla nasıl arkadaş oldum, adım adım anlattım.</p>
+        <div class="meta"><span>5 Ağustos</span><span>6 dk</span></div>
+      </a>
+      <a href="post.html" class="card" style="text-decoration:none; color:inherit;">
+        <span class="tag">öğrenme</span>
+        <h4>Yeni bir dil öğrenirken tuttuğum notlar</h4>
+        <p>Rust'a başlarken karşılaştığım ilk on hata ve her birinden çıkardığım ders.</p>
+        <div class="meta"><span>28 Temmuz</span><span>9 dk</span></div>
+      </a>
+      <a href="post.html" class="card" style="text-decoration:none; color:inherit;">
+        <span class="tag">düşünceler</span>
+        <h4>Kod yorumları aslında birer mektup</h4>
+        <p>Altı ay sonra kendi kodumu okurken, geçmişteki bana ne söylemek isterdim?</p>
+        <div class="meta"><span>19 Temmuz</span><span>4 dk</span></div>
+      </a>
+      <a href="post.html" class="card" style="text-decoration:none; color:inherit;">
+        <span class="tag">araçlar</span>
+        <h4>Masamdaki üç sadeleştirici araç</h4>
+        <p>Karmaşayı azaltan, göze batmayan ama gerçekten fark yaratan küçük araçlar.</p>
+        <div class="meta"><span>10 Temmuz</span><span>5 dk</span></div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="hakkinda">
+    <div class="section-head">
+      <h3 class="section-title">Hakkında</h3>
+    </div>
+    <div class="about">
+      <div class="about-mark">”</div>
+      <p>Bu defter, bir yazılımcının gündelik notlarından oluşuyor. <strong>Amaç mükemmel çözümler sergilemek değil</strong>, süreci — denemeleri, yanılmaları ve arada bulunan küçük güzellikleri — olduğu gibi paylaşmak. Kahve hâlâ sıcakken, ekran hâlâ açıkken yazılıyor.</p>
+    </div>
+  </section>
+
+  <section class="section" id="abone" style="border-bottom:none; padding-bottom:0;">
+    <div class="subscribe">
+      <div>
+        <h3>Yeni yazılar defterine düşsün</h3>
+        <p>Haftada bir, uzun olmayan bir e-posta. Reklam yok, sadece notlar.</p>
+      </div>
+      <form class="sub-form" id="subscription-form">
+        <input type="email" placeholder="e-posta adresin" required>
+        <button type="submit">Abone ol</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 defter — el yazısıyla değil, klavyeyle tutulan notlar.</span>
+    <div class="footer-links">
+      <a href="#">RSS</a>
+      <a href="#">GitHub</a>
+      <a href="#">İletişim</a>
+      <a href="admin-login.html">Yönetici</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  const API = 'http://localhost:3000/api';
+  const escapeHtml = (text = '') => text.replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]));
+  const dateText = value => new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long' }).format(new Date(value));
+  fetch(`${API}/posts`).then(response => response.json()).then(({posts}) => {
+    document.querySelector('#post-count').textContent = `${posts.length} kayıt · katalog A`;
+    if (!posts.length) return;
+    const [featured, ...rest] = posts;
+    document.querySelector('.featured').outerHTML = `<a href="post.html?slug=${encodeURIComponent(featured.slug)}" style="text-decoration:none; color:inherit; display:block;" class="featured"><div class="stamp">öne<br>çıkan</div><div class="featured-body"><h3>${escapeHtml(featured.title)}</h3><p>${escapeHtml(featured.excerpt || featured.content.slice(0, 180))}</p><div class="meta"><span>${dateText(featured.publishedAt)}</span><span>#yazı</span></div></div></a>`;
+    document.querySelector('.card-grid').innerHTML = rest.map(post => `<a href="post.html?slug=${encodeURIComponent(post.slug)}" class="card" style="text-decoration:none; color:inherit;"><span class="tag">yazı</span><h4>${escapeHtml(post.title)}</h4><p>${escapeHtml(post.excerpt || post.content.slice(0, 140))}</p><div class="meta"><span>${dateText(post.publishedAt)}</span></div></a>`).join('');
+  }).catch(() => { document.querySelector('#post-count').textContent = 'sunucuya bağlanılamadı'; });
+  document.querySelector('#subscription-form').addEventListener('submit', async event => {
+    event.preventDefault(); const input = event.currentTarget.querySelector('input');
+    try { const response = await fetch(`${API}/subscriptions`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email:input.value})}); const data = await response.json(); if (!response.ok) throw new Error(data.error); input.value = ''; alert(data.message); } catch (error) { alert(error.message); }
+  });
+</script>
+
+</body>
+</html>

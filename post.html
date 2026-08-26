@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bir fonksiyonu üç kez yeniden yazmanın hikayesi — defter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FBF3E7;
+    --paper-card: #FEFAF3;
+    --ink: #3A2E27;
+    --ink-soft: #6B5D51;
+    --rust: #B5541A;
+    --rust-deep: #8F3F12;
+    --pine: #2F6F62;
+    --pine-deep: #204E44;
+    --tan-line: #DCC7A3;
+    --coffee: #4A3728;
+    --shadow: rgba(58,46,39,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(181,84,26,0.05), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(47,111,98,0.05), transparent 40%);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background: var(--rust); color: var(--paper-card); }
+  a{ color:inherit; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 28px; }
+  .wrap-narrow{ max-width:700px; margin:0 auto; padding:0 28px; }
+
+  header{ padding:36px 0 20px; border-bottom:1px solid var(--tan-line); }
+  .header-row{ max-width:920px; margin:0 auto; padding:0 28px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; }
+  .logo{ font-family:'Fraunces', serif; font-weight:700; font-size:1.6rem; letter-spacing:-0.01em; text-decoration:none; display:flex; align-items:baseline; gap:8px; }
+  .logo .dot{ color:var(--rust); }
+  nav{ display:flex; gap:26px; font-family:'JetBrains Mono', monospace; font-size:0.82rem; letter-spacing:0.02em; }
+  nav a{ text-decoration:none; color:var(--ink-soft); position:relative; padding-bottom:3px; transition:color .2s ease; }
+  nav a:hover, nav a:focus-visible{ color:var(--rust-deep); }
+  nav a::after{ content:""; position:absolute; left:0; right:0; bottom:-3px; height:1px; background:var(--rust); transform:scaleX(0); transform-origin:left; transition:transform .25s ease; }
+  nav a:hover::after, nav a:focus-visible::after{ transform:scaleX(1); }
+
+  .crumb{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    padding:22px 0 0;
+    display:block;
+    text-decoration:none;
+  }
+  .crumb:hover{ color:var(--rust-deep); }
+  .crumb::before{ content:"← "; }
+
+  article{ padding:26px 0 60px; }
+
+  .art-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--rust-deep);
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    margin-bottom:16px;
+  }
+  h1.art-title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2rem, 4.6vw, 2.9rem);
+    line-height:1.14;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  .art-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    padding-bottom:28px;
+    margin-bottom:36px;
+    border-bottom:1px solid var(--tan-line);
+  }
+  .art-meta span::before{ content:"· "; color:var(--tan-line); }
+  .art-meta span:first-child::before{ content:""; }
+
+  .art-body{
+    font-size:1.13rem;
+    line-height:1.85;
+    color:var(--ink);
+  }
+  .art-body p{ margin:0 0 24px; }
+  .art-body h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.55rem;
+    margin:44px 0 18px;
+    letter-spacing:-0.01em;
+  }
+  .art-body strong{ color:var(--rust-deep); font-weight:600; }
+
+  blockquote{
+    margin:36px 0;
+    padding:6px 0 6px 26px;
+    border-left:3px solid var(--pine);
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.28rem;
+    color:var(--pine-deep);
+    line-height:1.6;
+  }
+
+  .code-block{
+    background:var(--coffee);
+    color:#E8DCC8;
+    border-radius:6px;
+    padding:22px 24px;
+    margin:30px 0;
+    overflow-x:auto;
+    box-shadow:0 10px 22px -14px var(--shadow);
+  }
+  .code-block .filename{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color:#B79D82;
+    margin-bottom:12px;
+    letter-spacing:0.03em;
+  }
+  .code-block pre{
+    margin:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.88rem;
+    line-height:1.7;
+    white-space:pre-wrap;
+  }
+  .code-block .kw{ color:#E8A87C; }
+  .code-block .fn{ color:#9FD8C3; }
+  .code-block .cm{ color:#8A7462; font-style:italic; }
+
+  .art-tags{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:44px 0 0;
+  }
+  .art-tags span{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--pine-deep);
+    background:rgba(47,111,98,0.09);
+    padding:5px 12px;
+    border-radius:3px;
+  }
+
+  .author-strip{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-top:48px;
+    padding-top:32px;
+    border-top:1px solid var(--tan-line);
+  }
+  .author-avatar{
+    width:52px; height:52px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--rust), var(--pine));
+    flex-shrink:0;
+  }
+  .author-strip .name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1rem;
+    margin:0 0 3px;
+  }
+  .author-strip .role{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  .nav-posts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    padding:40px 0;
+    border-top:1px solid var(--tan-line);
+    border-bottom:1px solid var(--tan-line);
+  }
+  .nav-posts a{
+    text-decoration:none;
+    background:var(--paper-card);
+    border:1px solid var(--tan-line);
+    padding:20px;
+    display:block;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .nav-posts a:hover{ transform:translateY(-2px); box-shadow:0 12px 22px -16px var(--shadow); }
+  .nav-posts .dir{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:6px;
+  }
+  .nav-posts .title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.02rem;
+    color:var(--ink);
+  }
+  .nav-posts .next{ text-align:right; }
+
+  footer{
+    max-width:920px;
+    margin:0 auto;
+    padding:30px 28px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.76rem;
+    color:var(--ink-soft);
+  }
+  footer a{ text-decoration:none; }
+  footer a:hover{ color:var(--rust-deep); }
+  .footer-links{ display:flex; gap:18px; }
+
+  @media (max-width: 640px){
+    .nav-posts{ grid-template-columns:1fr; }
+    .nav-posts .next{ text-align:left; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <a href="index.html" class="logo">defter<span class="dot">.</span></a>
+    <nav>
+      <a href="index.html#yazilar">Yazılar</a>
+      <a href="index.html#hakkinda">Hakkında</a>
+      <a href="index.html#abone">Abone Ol</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap-narrow">
+  <a href="index.html#yazilar" class="crumb">tüm yazılara dön</a>
+
+  <article>
+    <p class="art-eyebrow">#javascript</p>
+    <h1 class="art-title">Bir fonksiyonu üç kez yeniden yazmanın hikayesi</h1>
+    <div class="art-meta">
+      <span>12 Ağustos 2026</span>
+      <span>8 dk okuma</span>
+      <span>Elif Kaya</span>
+    </div>
+
+    <div class="art-body">
+      <p>Her şey basit bir "gecikmeli arama" (debounced search) fonksiyonuyla başladı. Kullanıcı bir şeyler yazdıkça sunucuya gereksiz istek atmayı önleyen, herkesin bir kere yazdığı türden bir yardımcı fonksiyon. İlk sürümü on dakikada yazdım, çalıştı, geçtim.</p>
+
+      <p>Üç hafta sonra aynı fonksiyona geri döndüğümde, ne yaptığını anlamak için beş dakika harcadım. Kendi yazdığım kodu okurken duraksamak, garip bir utanç hissi veriyor. <strong>İşte o an, "çalışıyor" ile "anlaşılır" arasındaki farkı gerçekten hissettim.</strong></p>
+
+      <h2>İkinci sürüm: isimlendirme meselesi</h2>
+      <p>İlk düzeltmem değişken isimlerini netleştirmekti. <code>t</code>, <code>fn</code>, <code>cb</code> gibi kısaltmalar yerine ne yaptığını söyleyen isimler kullandım. Küçük bir değişiklik gibi görünse de, kodu okuma hızım neredeyse iki katına çıktı.</p>
+
+      <div class="code-block">
+        <div class="filename">debounce.js</div>
+        <pre><span class="kw">function</span> <span class="fn">gecikmeliCalistir</span>(islev, bekleSuresi) {
+  <span class="cm">// her çağrıda önceki zamanlayıcıyı iptal ediyoruz</span>
+  <span class="kw">let</span> zamanlayici;
+  <span class="kw">return</span> (...argumanlar) => {
+    clearTimeout(zamanlayici);
+    zamanlayici = setTimeout(() => islev(...argumanlar), bekleSuresi);
+  };
+}</pre>
+      </div>
+
+      <p>Bu sürüm daha okunaklıydı ama hâlâ bir şey eksikti: fonksiyonun neden var olduğunu, hangi sorunu çözdüğünü anlatan hiçbir iz yoktu. Kod "ne" yaptığını söylüyordu, "neden" yaptığını değil.</p>
+
+      <blockquote>İyi kod, gelecekteki sana yazılmış sabırlı bir mektuptur.</blockquote>
+
+      <h2>Üçüncü sürüm: huzur</h2>
+      <p>Son halinde iki şey değişti: kısa bir yorum satırı ekledim ve fonksiyonu daha küçük, tek işi olan parçalara böldüm. Artık kod sadece çalışmıyor, aynı zamanda bir hikaye anlatıyordu.</p>
+
+      <p>Bu deneyimden çıkardığım ders basit ama unutması kolay: <strong>yalınlık bir hedef değil, bir alışkanlıktır.</strong> Tek seferde elde edilmez, tekrar tekrar gözden geçirmekle gelir. Bazen en iyi refactor, kodu silip yeniden yazmak değil, ona bir kez daha bakma sabrını göstermektir.</p>
+    </div>
+
+    <div class="art-tags">
+      <span>#javascript</span>
+      <span>#refactoring</span>
+      <span>#temiz-kod</span>
+    </div>
+
+    <div class="author-strip">
+      <div class="author-avatar"></div>
+      <div>
+        <p class="name">Elif Kaya</p>
+        <p class="role">yazılım geliştirici · defter'i kaleme alıyor</p>
+      </div>
+    </div>
+  </article>
+
+  <div class="nav-posts">
+    <a href="#" class="prev">
+      <div class="dir">önceki yazı</div>
+      <div class="title">Git rebase ile barışma günlüğü</div>
+    </a>
+    <a href="#" class="next">
+      <div class="dir">sonraki yazı</div>
+      <div class="title">Yeni bir dil öğrenirken tuttuğum notlar</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 defter — el yazısıyla değil, klavyeyle tutulan notlar.</span>
+  <div class="footer-links">
+    <a href="#">RSS</a>
+    <a href="#">GitHub</a>
+    <a href="#">İletişim</a>
+  </div>
+</footer>
+
+<script>
+  const API = 'http://localhost:3000/api';
+  const slug = new URLSearchParams(location.search).get('slug');
+  if (slug) fetch(`${API}/posts/${encodeURIComponent(slug)}`).then(response => response.json()).then(({post}) => {
+    if (!post) throw new Error('Yazı bulunamadı.');
+    document.title = `${post.title} — defter`;
+    document.querySelector('.art-eyebrow').textContent = '#yazı';
+    document.querySelector('.art-title').textContent = post.title;
+    document.querySelector('.art-meta').innerHTML = `<span>${new Intl.DateTimeFormat('tr-TR', {day:'numeric', month:'long', year:'numeric'}).format(new Date(post.publishedAt))}</span><span>Elif Kaya</span>`;
+    document.querySelector('.art-body').innerHTML = post.content.split(/\n\n+/).map(paragraph => `<p>${paragraph.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}</p>`).join('');
+  }).catch(error => { document.querySelector('.art-body').innerHTML = `<p>${error.message}</p>`; });
+</script>
+
+</body>
+</html>
