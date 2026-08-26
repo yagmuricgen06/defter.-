@@ -1,28 +1,28 @@
 # 📖 Defter
 
-**Defter**, yazılım, kodlama ve teknoloji dünyasını günlük yaşamla buluşturan kişisel bir blog platformudur.
+**Defter** is a personal blog platform that brings together software, coding, technology, and everyday life.
 
-Teknik bilgilerin yanında öğrenme süreçlerimi, deneyimlerimi, düşüncelerimi ve teknolojiyle günlük hayat arasındaki bağlantıları paylaşabileceğim kişisel bir dijital alan olarak geliştiriyorum.
+It is a personal digital space where I share what I learn, my experiences, thoughts, and the connections between technology and everyday life.
 
-## 🎯 Projenin Amacı
+## 🎯 Project Purpose
 
-Defter'in amacı, yazılım ve teknoloji konularını yalnızca teknik açıdan değil, günlük hayatla ilişkilendirerek ele almak.
+The goal of Defter is to explore software and technology not only from a technical perspective, but also through their connection to everyday life.
 
-Öğrendiklerimi ve deneyimlerimi düzenli olarak paylaşırken aynı zamanda zaman içerisinde geliştirebileceğim kişisel bir blog platformu oluşturmayı hedefliyorum.
+I aim to use Defter as a space to document my learning journey, share my experiences, and continuously improve my own blogging platform.
 
-## ✍️ İçerik
+## ✍️ Content
 
-Blogda zaman içerisinde şu konulara yer vermeyi planlıyorum:
+The blog will cover topics such as:
 
-* 💻 Yazılım ve programlama
-* 🤖 Yapay zeka ve teknoloji
-* 🌐 Web geliştirme
-* 📚 Öğrenme süreçleri ve deneyimler
-* 💡 Teknolojinin günlük hayattaki yeri
-* 📝 Kişisel notlar ve düşünceler
-* 🔍 Yeni teknolojiler ve araçlar
+* 💻 Software and programming
+* 🤖 Artificial intelligence and technology
+* 🌐 Web development
+* 📚 Learning processes and experiences
+* 💡 Technology in everyday life
+* 📝 Personal notes and thoughts
+* 🔍 New technologies and tools
 
-## 🛠️ Kullanılan Teknolojiler
+## 🛠️ Technologies
 
 * HTML
 * CSS
@@ -32,7 +32,7 @@ Blogda zaman içerisinde şu konulara yer vermeyi planlıyorum:
 * JSON
 * Git & GitHub
 
-## ⚙️ Proje Yapısı
+## ⚙️ Project Structure
 
 ```text
 Defter/
@@ -52,61 +52,62 @@ Defter/
 
 ## 🚀 Backend
 
-Defter'in backend tarafında Node.js tabanlı bağımsız bir servis kullanılmaktadır.
+Defter uses an independent Node.js-based backend service.
 
-Yazılar ve abonelik bilgileri `data/store.json` dosyasında tutulmaktadır.
+Blog posts and subscription data are stored in the `data/store.json` file.
 
 ### API
 
-| İşlem                 | Endpoint                      |
-| --------------------- | ----------------------------- |
-| Giriş                 | `POST /api/auth/login`        |
-| Yayındaki yazılar     | `GET /api/posts`              |
-| Tek yazı              | `GET /api/posts/:slug`        |
-| Abone ol              | `POST /api/subscriptions`     |
-| Yönetici yazı listesi | `GET /api/admin/posts`        |
-| Yazı oluştur          | `POST /api/admin/posts`       |
-| Yazı güncelle         | `PUT /api/admin/posts/:id`    |
-| Yazı sil              | `DELETE /api/admin/posts/:id` |
+| Operation       | Endpoint                      |
+| --------------- | ----------------------------- |
+| Login           | `POST /api/auth/login`        |
+| Published posts | `GET /api/posts`              |
+| Single post     | `GET /api/posts/:slug`        |
+| Subscribe       | `POST /api/subscriptions`     |
+| Admin post list | `GET /api/admin/posts`        |
+| Create post     | `POST /api/admin/posts`       |
+| Update post     | `PUT /api/admin/posts/:id`    |
+| Delete post     | `DELETE /api/admin/posts/:id` |
 
-Yönetici endpoint'leri kimlik doğrulama gerektirir.
+Admin endpoints require authentication.
 
-## ▶️ Çalıştırma
+## ▶️ Running the Project
 
-Projeyi yerel ortamda çalıştırmak için:
+To run the backend locally:
 
 ```bash
 node server.js
 ```
 
-Ardından tarayıcı üzerinden uygulamanın yerel adresine erişilebilir.
+Then open the local application address in your browser.
 
-## 🔐 Güvenlik
+## 🔐 Security
 
-Geliştirme ortamında kullanılan yönetici bilgileri yalnızca yerel kullanım içindir.
+Administrator credentials used during development are intended only for local development.
 
-Proje canlı ortama taşınmadan önce yönetici bilgileri ve token secret gibi hassas değerlerin **ortam değişkenleri** üzerinden yönetilmesi gerekir.
+Before deploying the project to a production environment, sensitive values such as administrator credentials and token secrets should be managed through environment variables.
 
-Gerçek şifre, API anahtarı veya gizli bilgilerin GitHub repository'sine eklenmemesine dikkat edilmelidir.
+Never commit real passwords, API keys, or other sensitive information to the GitHub repository.
 
-## 📌 Proje Durumu
+## 📌 Project Status
 
-🚧 **Geliştirme aşamasında**
+🚧 **Currently in development**
 
-Defter aktif olarak geliştirilmektedir. Yeni özellikler, yazılar ve iyileştirmeler zaman içerisinde eklenecektir.
+Defter is an ongoing project. New features, blog posts, and improvements will be added over time.
 
-## 🔮 Gelecek Planları
+## 🔮 Future Plans
 
-* [ ] Blog yazısı oluşturma ve yayınlama sistemini geliştirmek
-* [ ] Kategori sistemi eklemek
-* [ ] Arama özelliği eklemek
-* [ ] Responsive tasarımı geliştirmek
-* [ ] Dark / Light Mode eklemek
-* [ ] Kullanıcı deneyimini geliştirmek
-* [ ] Yeni içerikler eklemek
-* [ ] Blogu canlı ortama taşımak
+* [ ] Improve the blog post creation and publishing system
+* [ ] Add a category system
+* [ ] Add a search feature
+* [ ] Improve responsive design
+* [ ] Add Dark / Light Mode
+* [ ] Improve the user experience
+* [ ] Publish new content regularly
+* [ ] Deploy the blog to a production environment
 
 ---
 
-**Defter** — Öğrendiklerimi yazdığım, geliştirdiğim ve paylaştığım dijital alan. ✨
+**Defter** — A digital space where I learn, write, build, and share. ✨
+
 
